@@ -1,17 +1,29 @@
-import SignOut from '#/components/auth/sign-out'
-import { authClient } from '@/lib/auth-client'
-import { Switch } from '#/components/ui/switch'
-import { createFileRoute } from '@tanstack/react-router'
+import { getSession } from '#/lib/auth.functions'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/')({ component: Home })
+export const Route = createFileRoute('/')({
+  beforeLoad: async ({ location }) => {
+    const session = await getSession()
+
+    if (!session) {
+      throw redirect({
+        to: '/login',
+        search: {
+          redirect: location.href,
+        },
+      })
+    }
+
+    return { user: session.user }
+  },
+  component: Home,
+})
 
 function Home() {
-  const { data: session, isPending, error, refetch } = authClient.useSession()
   return (
     <main className="p-8">
       <div>
-        {isPending ? 'Loading details....' : <div>{session?.user.name}</div>}
-        <SignOut />
+        <h1>Home Page</h1>
       </div>
     </main>
   )

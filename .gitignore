@@ -13,4 +13,4 @@ __unconfig*
 todos.json
 suggestions.md
 
-/src/generated/prisma
+/generated/prisma
